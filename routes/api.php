@@ -1,36 +1,32 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-// As rotas estão configuradas para o prefixo api/v1/ no bootstrap/app.php
-// Exemplo de como essas rotas devem ser construídas:
-Route::prefix('auth')->group(function () {
-    Route::post('/login', function () {
-        return response()->json(['message' => 'Login endpoint']);
-    });
-    // demais rotas de auth
-});
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\MeController;
 
 Route::prefix('users')->group(function () {
-    Route::get('/', function () {
-        return response()->json(['message' => 'Users list']);
-    });
-    // demais rotas de usuarios
+    Route::post('/register', [UserController::class, 'register']);
+    Route::post('/verify-email', [UserController::class, 'verifyEmail']);
+    Route::post('/resend-verification', [UserController::class, 'resendVerification']);
 });
 
-Route::prefix('me')->group(function () {
-    Route::get('/', function () {
-        return response()->json(['message' => 'Current user profile']);
-    });
+Route::prefix('auth')->group(function () {
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::patch('/reset-password', [AuthController::class, 'resetPassword']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api'); 
+    Route::get('/verify', [AuthController::class, 'verify'])->middleware('auth:api');
+    Route::get('/certs', [AuthController::class, 'certs']);
+});
+
+Route::prefix('me')->middleware('auth:api')->group(function () {
+    Route::get('/', [MeController::class, 'show']);
+    Route::patch('/', [MeController::class, 'update']);
+    Route::post('/avatar', [MeController::class, 'avatar']);
+    Route::put('/password', [MeController::class, 'updatePassword']);
+    Route::get('/sessions', [MeController::class, 'sessions']);
+    Route::delete('/sessions/{id}', [MeController::class, 'revokeSession']);
+    Route::delete('/account', [MeController::class, 'destroy']);
 });
