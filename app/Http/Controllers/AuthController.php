@@ -18,12 +18,12 @@ class AuthController extends Controller
 {
     private function getPrivateKey()
     {
-        return file_get_contents(storage_path('keys/private.key'));
+        return file_get_contents(storage_path('oauth-private.key'));
     }
 
     private function getPublicKey()
     {
-        return file_get_contents(storage_path('keys/public.key'));
+        return file_get_contents(storage_path('oauth-public.key'));
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -35,7 +35,7 @@ class AuthController extends Controller
         }
 
         $privateKey = $this->getPrivateKey();
-        
+
         $issuedAt = time();
         $expirationTime = $issuedAt + 3600; // valid for 1 hour
         $payload = array(
@@ -93,7 +93,7 @@ class AuthController extends Controller
         try {
             $publicKey = $this->getPublicKey();
             $decoded = JWT::decode($token, new Key($publicKey, 'RS256'));
-            
+
             return response()->json([
                 'valid' => true,
                 'user_id' => $decoded->sub,
