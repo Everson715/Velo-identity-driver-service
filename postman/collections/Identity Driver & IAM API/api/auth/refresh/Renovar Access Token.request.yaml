@@ -1,0 +1,14 @@
+$kind: http-request
+description: Gera um novo Access Token utilizando o Refresh Token ativo.
+url: "{{baseUrl}}/api/auth/refresh"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "refresh_token": "string"
+    }
+examples: ./.resources/Renovar Access Token.resources/examples
+order: 1000

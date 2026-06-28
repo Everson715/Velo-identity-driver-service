@@ -1,0 +1,6 @@
+$kind: http-request
+description: Lista os dispositivos e sessões que possuem tokens válidos para a conta.
+url: "{{baseUrl}}/api/me/sessions"
+method: GET
+examples: ./.resources/Listar sessões ativas.resources/examples
+order: 1000

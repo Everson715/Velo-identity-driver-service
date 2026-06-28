@@ -1,0 +1,12 @@
+$kind: http-example
+name: Conta desativada logicamente.
+request:
+  url: "{{baseUrl}}/api/me/account"
+  method: DELETE
+response:
+  statusCode: 204
+  statusText: No Content
+  body:
+    type: text
+    content: ""
+order: 1000

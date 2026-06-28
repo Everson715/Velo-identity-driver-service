@@ -1,0 +1,23 @@
+$kind: http-example
+name: Conflito de concorrência ou ID inexistente.
+request:
+  url: "{{baseUrl}}/api/drivers/:driverId/approve"
+  method: POST
+  headers:
+    Accept: application/json
+  pathVariables:
+    - key: driverId
+      value: string
+      description: ID do motorista (UUID)
+response:
+  statusCode: 409
+  statusText: Conflict
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "message": "Driver status could not be updated due to a conflict."
+      }
+order: 2000

@@ -1,0 +1,6 @@
+$kind: http-request
+description: Modificação parcial de informações cadastrais.
+url: "{{baseUrl}}/api/me"
+method: PATCH
+examples: ./.resources/Atualizar dados do perfil.resources/examples
+order: 4000

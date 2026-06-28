@@ -1,0 +1,6 @@
+$kind: http-request
+description: Invalida os tokens ativos e coloca o JTI na blacklist do Redis.
+url: "{{baseUrl}}/api/auth/logout"
+method: POST
+examples: ./.resources/Encerrar Sessão.resources/examples
+order: 1000
