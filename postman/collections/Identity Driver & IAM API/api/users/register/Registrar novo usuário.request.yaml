@@ -1,6 +1,7 @@
 $kind: http-request
+name: Registrar novo usuário
 description: Criação de novos perfis de passageiros ou motoristas.
-url: "{{baseUrl}}/api/users/register"
+url: "{{baseUrl}}api/v1/users/register"
 method: POST
 headers:
   Content-Type: application/json
