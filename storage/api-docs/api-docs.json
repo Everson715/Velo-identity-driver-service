@@ -1,0 +1,57 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Identity Driver API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/drivers/{driverId}/approve": {
+            "post": {
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Approve a driver",
+                "description": "Approves a driver. Protected against race conditions using Optimistic Locking.",
+                "operationId": "cfbb76dba4143f74cd154c6d9289688d",
+                "parameters": [
+                    {
+                        "name": "driverId",
+                        "in": "path",
+                        "description": "The ID of the driver to approve",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Driver successfully approved"
+                    },
+                    "409": {
+                        "description": "Conflict - Driver state could not be updated due to concurrent modifications",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Driver status could not be updated to 'approved' due to a conflict or invalid state."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Drivers",
+            "description": "Drivers"
+        }
+    ]
+}
