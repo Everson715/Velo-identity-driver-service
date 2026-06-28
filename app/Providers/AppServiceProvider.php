@@ -11,7 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(\App\Domain\Interfaces\IDriverRepository::class, \App\Infrastructure\Repositories\EloquentDriverRepository::class);
     }
 
     /**
