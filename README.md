@@ -1,58 +1,56 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Velo Identity Driver Service
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+O `identity-driver-service` é um microserviço da Velo responsável por gerenciar a identidade e a validação de motoristas parceiros. Este serviço controla estados críticos (aprovação, rejeição, suspensão) e valida documentos, garantindo segurança transacional.
 
-## About Laravel
+## 🏗️ Arquitetura Tridimensional (3D)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+O projeto adota uma arquitetura em camadas focada no isolamento do Domínio. Isso previne o acoplamento excessivo com frameworks de banco de dados (como o ORM do Laravel) e garante que as regras de negócio sejam testáveis de forma unitária e independente.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+As camadas principais são:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Application (Aplicação):**
+   - Lida com o tráfego externo (HTTP, Console, Eventos).
+   - Diretórios: `app/Application/Http/Controllers`, `app/Application/DTOs`
+   - O papel desta camada é validar a entrada, passar para o serviço de domínio apropriado e formatar a resposta.
 
-## Learning Laravel
+2. **Domain (Domínio):**
+   - Coração da aplicação. Contém apenas código PHP puro, totalmente independente de Eloquent ou Frameworks externos.
+   - Diretórios: `app/Domain/Entities`, `app/Domain/Services`, `app/Domain/Interfaces`
+   - **Exemplo**: O serviço `DriverApprovalService` orquestra as mudanças de estado, enquanto o contrato `IDriverRepository` define como os dados são lidos e gravados de forma segura.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. **Infrastructure (Infraestrutura):**
+   - Implementa detalhes técnicos e interações com o mundo externo, como banco de dados (Eloquent), filas, ou APIs externas.
+   - Diretórios: `app/Infrastructure/Models`, `app/Infrastructure/Repositories`
+   - Os repositórios concretos implementam as interfaces definidas no Domínio e realizam o mapeamento dos Models do banco para Entidades Puras.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🔒 Prevenção de Concorrência (Race Conditions)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Operações críticas de validação de motoristas são protegidas contra concorrência por meio de **Update Atômico (Lock Otimista)**. A abordagem é implementada no método `updateStatusSafe` da infraestrutura:
 
-## Agentic Development
+1. A atualização do banco usa query conditions estritas `where('status', $oldStatus)`.
+2. Isso evita que dois processos modifiquem simultaneamente o status de um motorista sem saber da alteração um do outro.
+3. Se houver falha na alteração, o Serviço de Domínio emite um `ConflictHttpException` (HTTP 409 Conflict), evitando estados corrompidos.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## 🚀 Instalação e Configuração
+
+Certifique-se de que as dependências estejam instaladas e de atualizar o mapeamento de classes do composer:
 
 ```bash
-composer require laravel/boost --dev
+# Instalar dependências
+composer install
 
-php artisan boost:install
+# Atualizar autoload para os novos namespaces (app/Domain, app/Infrastructure, etc)
+composer dump-autoload
+
+# Configurar o ambiente
+cp .env.example .env
+php artisan key:generate
+
+# Rodar migrations (se aplicável)
+php artisan migrate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## 🧪 Padrões de Qualidade
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. **Dependência Invertida**: Modelos Eloquent (`App\Infrastructure\Models`) nunca são instanciados ou mencionados na pasta `app/Domain`.
+2. **Entidades Imutáveis**: Entidades de domínio priorizam propriedades `readonly` para assegurar que modificações de estado só aconteçam de forma declarativa e controlada.
