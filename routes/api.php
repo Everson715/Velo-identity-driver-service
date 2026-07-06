@@ -1,11 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\MeController;
-
-use App\Application\Http\Controllers\DriverIdentityController;
+use App\Infrastructure\Http\Controllers\AuthController;
+use App\Infrastructure\Http\Controllers\UserController;
+use App\Infrastructure\Http\Controllers\MeController;
+use App\Infrastructure\Http\Controllers\DriverIdentityController;
 
 // Users Endpoints -> Ficará automaticamente como: /api/v1/users/...
 Route::prefix('users')->group(function () {
