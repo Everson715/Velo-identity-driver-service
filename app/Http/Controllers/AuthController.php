@@ -131,4 +131,9 @@ class AuthController extends Controller
 
         return response()->json($jwks);
     }
+
+    public function publicKey(): JsonResponse
+    {
+        return response()->json(['public_key' => $this->getPublicKey()]);
+    }
 }

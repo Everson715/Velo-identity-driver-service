@@ -21,6 +21,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
     Route::get('/verify', [AuthController::class, 'verify'])->middleware('auth:api');
     Route::get('/certs', [AuthController::class, 'certs']);
+    Route::get('/public-key', [AuthController::class, 'publicKey']);
 });
 
 // Me Endpoints -> Ficará automaticamente como: /api/v1/me/...

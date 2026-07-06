@@ -18,6 +18,8 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
+RUN composer install --optimize-autoloader
+
 # Copy entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
