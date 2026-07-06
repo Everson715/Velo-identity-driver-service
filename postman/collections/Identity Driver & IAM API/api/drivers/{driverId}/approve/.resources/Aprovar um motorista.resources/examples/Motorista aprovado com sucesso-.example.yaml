@@ -1,0 +1,23 @@
+$kind: http-example
+name: Motorista aprovado com sucesso.
+request:
+  url: "{{baseUrl}}/api/drivers/:driverId/approve"
+  method: POST
+  headers:
+    Accept: application/json
+  pathVariables:
+    - key: driverId
+      value: string
+      description: ID do motorista (UUID)
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "message": "Driver successfully approved"
+      }
+order: 1000

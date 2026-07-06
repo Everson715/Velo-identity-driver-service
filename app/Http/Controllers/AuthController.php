@@ -18,12 +18,12 @@ class AuthController extends Controller
 {
     private function getPrivateKey()
     {
-        return file_get_contents(storage_path('oauth-private.key'));
+        return file_get_contents(storage_path('keys/private.key'));
     }
 
     private function getPublicKey()
     {
-        return file_get_contents(storage_path('oauth-public.key'));
+        return file_get_contents(storage_path('keys/public.key'));
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -44,7 +44,7 @@ class AuthController extends Controller
             'aud' => 'velo-identity',
             'iat' => $issuedAt,
             'exp' => $expirationTime,
-            'roles' => ['passenger'], // mock or get from DB
+            'roles' => [$user->role],
             'email' => $user->email,
         );
 

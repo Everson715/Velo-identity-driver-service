@@ -1,0 +1,22 @@
+$kind: http-example
+name: Usuário criado com sucesso.
+request:
+  url: "{{baseUrl}}/api/users/register"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "email": "jose@upe.br",
+        "password": "secret123",
+        "role": "DRIVER"
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  body:
+    type: text
+    content: ""
+order: 1000

@@ -1,0 +1,16 @@
+$kind: http-request
+description: Autenticação de credenciais retornando Access Token (JWT) e Refresh Token.
+url: "{{baseUrl}}/api/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "jose@upe.br",
+      "password": "secret123"
+    }
+examples: ./.resources/Realizar Login.resources/examples
+order: 1000

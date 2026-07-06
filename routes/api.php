@@ -5,11 +5,18 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MeController;
 
+use App\Application\Http\Controllers\DriverIdentityController;
+
 // Users Endpoints -> Ficará automaticamente como: /api/v1/users/...
 Route::prefix('users')->group(function () {
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/verify-email', [UserController::class, 'verifyEmail']);
     Route::post('/resend-verification', [UserController::class, 'resendVerification']);
+});
+
+// Drivers Endpoints
+Route::prefix('drivers')->group(function () {
+    Route::post('/{driverId}/approve', [DriverIdentityController::class, 'approveDriver']);
 });
 
 // Auth Endpoints -> Ficará automaticamente como: /api/v1/auth/...
