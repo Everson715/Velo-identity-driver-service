@@ -1,5 +1,0 @@
-$kind: collection
-name: Identity Driver & IAM API
-description: Especificação completa de endpoints para o identity-driver-service (Autenticação, Gestão de Usuários e Motoristas).
-variables:
-  baseUrl: http://localhost:8001

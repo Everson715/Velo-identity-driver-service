@@ -1,6 +1,0 @@
-$kind: http-request
-description: Executa o Soft Delete da conta atendendo às diretrizes de conformidade da LGPD.
-url: "{{baseUrl}}/api/me/account"
-method: DELETE
-examples: ./.resources/Exclusão de conta.resources/examples
-order: 1000
